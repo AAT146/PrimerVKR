@@ -16,12 +16,12 @@ namespace PrimerRaschetPBN
         /// </summary>
         public static void Main()
         {
-            Rastr rastr = new Rastr();
+            Rastr rst = new Rastr();
 
             string patch = @"C:\Users\Анастасия\Desktop\1.rst";
-            rastr.Load(RG_KOD.RG_REPL, patch, string.Empty);
+            rst.Load(RG_KOD.RG_REPL, patch, string.Empty);
 
-            var tables = rastr.Tables;
+            var tables = rst.Tables;
             var node = tables.Item("node");
 
             var pg = node.Cols.Item("pn");
@@ -29,7 +29,7 @@ namespace PrimerRaschetPBN
             pg.Z[0] = 555;
 
             string patch_ = @"C:\Users\Анастасия\Desktop\11.rst";
-            rastr.Save(patch_, string.Empty);
+            rst.Save(patch_, string.Empty);
         }
     }
 }
