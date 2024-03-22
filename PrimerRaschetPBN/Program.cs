@@ -1,8 +1,5 @@
-// <copyright file="Program.cs" company="PlaceholderCompany">
-// Copyright (c) PlaceholderCompany. All rights reserved.
-// </copyright>
-
 using ASTRALib;
+using System.Xml.Linq;
 
 namespace PrimerRaschetPBN
 {
@@ -16,20 +13,26 @@ namespace PrimerRaschetPBN
         /// </summary>
         public static void Main()
         {
-            Rastr rst = new Rastr();
+            // Создание указателя на экземпляр RastrWin и его запуск
+            Rastr rastr = new Rastr();
 
-            string patch = @"C:\Users\Анастасия\Desktop\1.rst";
-            rst.Load(RG_KOD.RG_REPL, patch, string.Empty);
+            // Загрузка файла с данными
+            string patch = @"C:\Users\aat146\Desktop\ПримерКП\Режим1.rst";
+            rastr.Load(RG_KOD.RG_REPL, patch, " ");
 
-            var tables = rst.Tables;
-            var node = tables.Item("node");
+            // Объявление объекта, содержащего таблицу "Узлы"
+            ITable Node = rastr.Tables.Item("Node");
 
-            var pg = node.Cols.Item("pn");
-
-            pg.Z[0] = 555;
-
-            string patch_ = @"C:\Users\Анастасия\Desktop\11.rst";
-            rst.Save(patch_, string.Empty);
+            // Создание объектов, содержащих информацию по каждой колонке
+            ICol numberNode = Node.Cols.Item("ny"); // Номер узла
+            ICol nameNode = Node.Cols.Item("name"); // Название узла
+            ICol numberArea = Node.Cols.Item("na"); // Номер района
+            ICol powerActiveLoad = Node.Cols.Item("pn"); // Активная мощность нагрузки.
+            ICol powerRectiveLoad = Node.Cols.Item("qn"); // Реактивная мощность нагрузки.
+            ICol powerActiveGeneration = Node.Cols.Item("pg"); // Активная мощность генерации.
+            ICol powerRectiveGeneration = Node.Cols.Item("qg"); // Реактивная мощность генерации.
+            ICol voltageCalc = Node.Cols.Item("vras"); // Расчётное напряжение.
+            ICol deltaCalc = Node.Cols.Item("delta"); // Расчётное напряжение.
         }
     }
 }
