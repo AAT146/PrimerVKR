@@ -35,10 +35,10 @@ namespace PrimerRaschetPBN
             var numberNode = node.Cols.Item("ny");   // Номер узла
             var nameNode = node.Cols.Item("name");   // Название узла
             var numberArea = node.Cols.Item("na");   // Номер района
-            var powerActiveLoad = node.Cols.Item("pn");   // Активная мощность нагрузки.
-            var powerRectiveGeneration = node.Cols.Item("qg");   // Реактивная мощность генерации.
-            var voltageCalc = node.Cols.Item("vras");   // Расчётное напряжение.
-            var deltaCalc = node.Cols.Item("delta");   // Расчётный угол.
+            var powerActiveLoad = node.Cols.Item("pn");   // Активная мощность нагрузки
+            var powerRectiveGeneration = node.Cols.Item("qg");   // Реактивная мощность генерации
+            var voltageCalc = node.Cols.Item("vras");   // Расчётное напряжение
+            var deltaCalc = node.Cols.Item("delta");   // Расчётный угол
 
             var powerActiveGeneration = generator.Cols.Item("P");   // Активная мощность генерации.
 
@@ -46,16 +46,28 @@ namespace PrimerRaschetPBN
             var vetv = tables.Item("vetv");
 
             // Создание объектов, содержащих информацию по каждой колонке
-            var staVetv = vetv.Cols.Item("sta");   // Состояние ветви.
+            var staVetv = vetv.Cols.Item("sta");   // Состояние ветви
+            var nameVetv = vetv.Cols.Item("name");   // Название ветви
 
-            // Вывод в консоль название узла
-            var setSelName = "ny=" + 10;   // Переменная ny = 10 (№ узла = 10)
-            node.SetSel(setSelName);   // Выборка по переменной.
-            var index = node.FindNextSel(-1);   // Возврат индекса след.строки, удовл-ей выборке (искл: -1).
-            var name10 = nameNode.Z[index];   // Переменная с найденным индексом в столбце Название.
-            int p = 500;
-            powerActiveGeneration.Z[index] = p;
-            Console.WriteLine($"Название узла 10: {name10}.");
+            // Вывод в консоль название узлов
+            for (int i = 1; i <= 46; i++)
+            {
+                var setSelName = "ny=" + i;   // Переменная ny = i (№ узла = i)
+                node.SetSel(setSelName);   // Выборка по переменной
+                var index = node.FindNextSel(-1);   // Возврат индекса след.строки, удовл-ей выборке (искл: -1)
+                var nameN = nameNode.Z[index];   // Переменная с найденным индексом в столбце Название
+                Console.WriteLine($"Название узла 10: {nameN}.");
+            }
+
+            //int p = 500;
+            //powerActiveGeneration.Z[index] = p;
+
+            var setSelVetv = "ip=" + 23 + "&" + "iq=" + 1;
+            vetv.SetSel(setSelVetv);
+            var number = vetv.FindNextSel(-1);
+            staVetv.Z[number] = 1;    // 1 - отключение; 0 -включение
+            var name1v = nameVetv.Z[number];
+            Console.WriteLine($"Название ветви: {name1v}.");
 
             // Расчет УР
             _ = rastr.rgm("");
