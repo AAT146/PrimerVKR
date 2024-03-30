@@ -1,4 +1,5 @@
 using ASTRALib;
+using System;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace PrimerRaschetPBN
@@ -20,10 +21,14 @@ namespace PrimerRaschetPBN
             string file = @"C:\Users\aat146\Desktop\ПримерКП\Режим1.rst";
             string shablon = @"C:\Programs\RastrWin3\RastrWin3\SHABLON\динамика.rst";
             string folder = @"C:\Users\aat146\Desktop\ПримерКП";
-            string fileExc = "Книга2.xlsx";
+            string fileExc = "Результат.xlsx";
             string xlsxFile = Path.Combine(folder, fileExc);
 
             rastr.Load(RG_KOD.RG_REPL, file, shablon);
+
+            // Вывод в консоль название узлов
+            Excel.Application excelApp = new Excel.Application();
+            Excel.Workbook workbook = excelApp.Workbooks.Add();
 
             // Объявление переменной, тип - таблицаю
             var tables = rastr.Tables;
@@ -49,7 +54,7 @@ namespace PrimerRaschetPBN
 
             var powerActiveGeneration = generator.Cols.Item("P");   // Активная мощность генерации
 
-            //var numberArea = area.Cols.Item("na");   // Номер района
+            var areaNumber = area.Cols.Item("na");   // Номер района
             var nameArea = area.ColS.Item("name");   // Название района
 
             // Объявление объекта, содержащего таблицу "Ветви"
@@ -59,64 +64,214 @@ namespace PrimerRaschetPBN
             var staVetv = vetv.Cols.Item("sta");   // Состояние ветви
             var nameVetv = vetv.Cols.Item("name");   // Название ветви
 
-            List<string> listNodeName = new List<string>();
+            // Лист с названиями районов
+            List<string> listAreaName = new List<string>();
 
-            int startNode = 1;
-            int endNode = 46;
+            // Лист с порядковыми номерами районов
+            List<int> listAreaNumber = new List<int>();
 
-            for (int i = startNode; i <= endNode; i++)
-            {
-                var setSelName = "ny=" + i;   // Переменная ny = i (№ узла = i)
-                node.SetSel(setSelName);   // Выборка по переменной
-                var index = node.FindNextSel(-1);   // Возврат индекса след.строки, удовл-ей выборке (искл: -1)
-                var nameN = nameNode.Z[index];   // Переменная с найденным индексом в столбце Название
-                listNodeName.Add(nameN);    // Добавление названия в список
-            }
+            // Цикл заполнения листов
+            int startArea = 0;
+            int endArea = 3;
+            int startNode = 0;
+            int endNode = 45;
 
-            // Вывод в консоль название узлов
-            Excel.Application excelApp = new Excel.Application();
-            Excel.Workbook workbook = excelApp.Workbooks.Add();
-
-            int startArea = 1;
-            int endArea = 4;
             for (int i = startArea; i <= endArea; i++)
             {
-                var setSelNumber = "na=" + i;
-                area.SetSel(setSelNumber);
-                var index = area.FindNextSel(-1);
-                var areaName = nameArea.Z[index];
+                var nameA = nameArea.Z[i];
+                var numberA = areaNumber.Z[i];
+                listAreaNumber.Add(numberA);
+                listAreaName.Add(nameA);
+            }
 
+            for (int i = startArea; i <= endArea; i++)
+            {
                 // Создаём новый лист в книге
+                Excel.Worksheet sheet0 = workbook.Sheets.Add();
+                sheet0.Name = listAreaName[0];
+                Excel.Worksheet sheet1 = workbook.Sheets.Add();
+                sheet1.Name = listAreaName[1];
+                Excel.Worksheet sheet2 = workbook.Sheets.Add();
+                sheet2.Name = listAreaName[2];
+                Excel.Worksheet sheet3 = workbook.Sheets.Add();
+                sheet3.Name = listAreaName[3];
 
-                Excel.Worksheet worksheet = workbook.Sheets.Add();
-
-                // Задаём название листу такое же, как ниаменование района
-                worksheet.Name = areaName;
-
-                // Получаем диапазон ячеек начиная с ячейки A1
-                Excel.Range range = worksheet.Range["A1"];
-
-                for (int j = 0; j < listNodeName.Count; j++)
+                if (numberArea.Z[i] == listAreaNumber[0])
                 {
-                    range.Offset[j, 0].Value = listNodeName[j];
+                    // Получаем диапазон ячеек начиная с ячейки A1
+                    Excel.Range range = sheet0.Range["A1"];
+
+                    range.Offset[0, 0].Value = "Название узла";
+                    range.Offset[0, 1].Value = "Номер района";
+                    range.Offset[0, 2].Value = "Название района";
+
+                    for (int j = startNode; j <= endNode; j++)
+                    {
+                        //range.Offset[j + 1, 0].Value = nameNode[j];
+                        range.Offset[j + 1, 1].Value = listAreaNumber[0];
+                        range.Offset[j + 1, 2].Value = listAreaName[0];
+                    }
+                }
+
+                if (numberArea.Z[i] == listAreaNumber[1])
+                {
+                    // Получаем диапазон ячеек начиная с ячейки A1
+                    Excel.Range range = sheet1.Range["A1"];
+
+                    range.Offset[0, 0].Value = "Название узла";
+                    range.Offset[0, 1].Value = "Номер района";
+                    range.Offset[0, 2].Value = "Название района";
+
+                    for (int j = startNode; j <= endNode; j++)
+                    {
+                        //range.Offset[j + 1, 0].Value = nameNode[j];
+                        range.Offset[j + 1, 1].Value = listAreaNumber[1];
+                        range.Offset[j + 1, 2].Value = listAreaName[1];
+                    }
+                }
+
+                if (numberArea.Z[i] == listAreaNumber[2])
+                {
+                    // Получаем диапазон ячеек начиная с ячейки A1
+                    Excel.Range range = sheet2.Range["A1"];
+
+                    range.Offset[0, 0].Value = "Название узла";
+                    range.Offset[0, 1].Value = "Номер района";
+                    range.Offset[0, 2].Value = "Название района";
+
+                    for (int j = startNode; j <= endNode; j++)
+                    {
+                        //range.Offset[j + 1, 0].Value = nameNode[j];
+                        range.Offset[j + 1, 1].Value = listAreaNumber[2];
+                        range.Offset[j + 1, 2].Value = listAreaName[2];
+                    }
+                }
+
+                if (numberArea.Z[i] == listAreaNumber[3])
+                {
+                    // Получаем диапазон ячеек начиная с ячейки A1
+                    Excel.Range range = sheet3.Range["A1"];
+
+                    range.Offset[0, 0].Value = "Название узла";
+                    range.Offset[0, 1].Value = "Номер района";
+                    range.Offset[0, 2].Value = "Название района";
+
+                    for (int j = startNode; j <= endNode; j++)
+                    {
+                        //range.Offset[j + 1, 0].Value = nameNode[j];
+                        range.Offset[j + 1, 1].Value = listAreaNumber[3];
+                        range.Offset[j + 1, 2].Value = listAreaName[3];
+                    }
                 }
             }
+
+            //// Заполнение листа
+            //int startNode = 0;
+            //int endNode = 45;
+            //for (int index = startNode; index <= endNode; index++)
+            //{
+            //    //var setSelName = "ny=" + i;
+            //    //node.SetSel(setSelName);
+            //    //var index = node.FindNextSel(-1);
+
+            //    if (numberArea.Z[index] == listAreaNumber[0])
+            //    {
+            //        // Создаём новый лист в книге
+            //        Excel.Worksheet worksheet = workbook.Sheets.Add();
+
+            //        // Задаём название листу такое же, как ниаменование района
+            //        //worksheet.Name = listAreaName[0];
+
+            //        // Получаем диапазон ячеек начиная с ячейки A1
+            //        Excel.Range range = worksheet.Range["A1"];
+
+            //        range.Offset[0, 0].Value = "Название узла";
+            //        range.Offset[0, 1].Value = "Номер района";
+            //        range.Offset[0, 2].Value = "Название района";
+
+            //        for (int j = 0; j <= endNode; j++)
+            //        {
+            //            //range.Offset[j + 1, 0].Value = nameNode[index];
+            //            range.Offset[j + 1, 1].Value = listAreaNumber[0];
+            //            range.Offset[j + 1, 2].Value = listAreaName[0];
+            //        }
+            //    }
+
+            //    if (numberArea.Z[index] == listAreaNumber[1])
+            //    {
+            //        // Создаём новый лист в книге
+            //        Excel.Worksheet worksheet = workbook.Sheets.Add();
+
+            //        // Задаём название листу такое же, как ниаменование района
+            //        //worksheet.Name = listAreaName[1];
+
+            //        // Получаем диапазон ячеек начиная с ячейки A1
+            //        Excel.Range range = worksheet.Range["A1"];
+
+            //        range.Offset[0, 0].Value = "Название узла";
+            //        range.Offset[0, 1].Value = "Номер района";
+            //        range.Offset[0, 2].Value = "Название района";
+
+            //        for (int j = 0; j <= endNode; j++)
+            //        {
+            //            //range.Offset[j + 1, 0].Value = nameNode[j];
+            //            range.Offset[j + 1, 1].Value = listAreaNumber[1];
+            //            range.Offset[j + 1, 2].Value = listAreaName[1];
+            //        }
+            //    }
+
+            //    if (numberArea.Z[index] == listAreaNumber[2])
+            //    {
+            //        // Создаём новый лист в книге
+            //        Excel.Worksheet worksheet = workbook.Sheets.Add();
+
+            //        // Задаём название листу такое же, как ниаменование района
+            //        //worksheet.Name = listAreaName[2];
+
+            //        // Получаем диапазон ячеек начиная с ячейки A1
+            //        Excel.Range range = worksheet.Range["A1"];
+
+            //        range.Offset[0, 0].Value = "Название узла";
+            //        range.Offset[0, 1].Value = "Номер района";
+            //        range.Offset[0, 2].Value = "Название района";
+
+            //        for (int j = 0; j <= endNode; j++)
+            //        {
+            //            //range.Offset[j + 1, 0].Value = nameNode[index];
+            //            range.Offset[j + 1, 1].Value = listAreaNumber[2];
+            //            range.Offset[j + 1, 2].Value = listAreaName[2];
+            //        }
+            //    }
+
+            //    if (numberArea.Z[index] == listAreaNumber[3])
+            //    {
+            //        // Создаём новый лист в книге
+            //        Excel.Worksheet worksheet = workbook.Sheets.Add();
+
+            //        // Задаём название листу такое же, как ниаменование района
+            //        //worksheet.Name = listAreaName[3];
+
+            //        // Получаем диапазон ячеек начиная с ячейки A1
+            //        Excel.Range range = worksheet.Range["A1"];
+
+            //        range.Offset[0, 0].Value = "Название узла";
+            //        range.Offset[0, 1].Value = "Номер района";
+            //        range.Offset[0, 2].Value = "Название района";
+
+            //        for (int j = 0; j <= endNode; j++)
+            //        {
+            //            //range.Offset[j + 1, 0].Value = nameNode[index];
+            //            range.Offset[j + 1, 1].Value = listAreaNumber[3];
+            //            range.Offset[j + 1, 2].Value = listAreaName[3];
+            //        }
+            //    }
+            //}
 
             workbook.SaveAs(xlsxFile);
             workbook.Close();
             excelApp.Quit();
 
-            Console.WriteLine($"Пустой файл Excel успешно создан по пути: {xlsxFile}");
-
-            //int p = 500;
-            //powerActiveGeneration.Z[index] = p;
-
-            var setSelVetv = "ip=" + 23 + "&" + "iq=" + 1;
-            vetv.SetSel(setSelVetv);
-            var number = vetv.FindNextSel(-1);
-            staVetv.Z[number] = 1;    // 1 - отключение; 0 -включение
-            var name1v = nameVetv.Z[number];
-            Console.WriteLine($"Название ветви: {name1v}.");
+            Console.WriteLine($"Файл Excel успешно создан по пути: {xlsxFile}");
 
             // Расчет УР
             _ = rastr.rgm("");
